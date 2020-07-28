@@ -20,3 +20,5 @@ Status DelLinkList(LinkList linklist, int pos);
 void TranverseLinkList(LinkList linklist);
 
 int LocateLinkList(LinkList linklist, ElementType data);
+
+ElementType GetEleLinkList(LinkList linklist, int pos);

@@ -87,6 +87,22 @@ int LocateLinkList(LinkList linklist, ElementType data)
 		return -1;
 	return j;
 }
+
+ElementType GetEleLinkList(LinkList linklist, int pos)
+{
+	Node *p = linklist->next;
+	int j = 1;
+	while(p && j<pos)
+	{
+		p = p->next;
+		j++;
+	}
+	if(!p || j>pos)
+	{
+		return NULL;
+	}
+	return p->data;
+}
 	int main() 
 	{
 		LinkList linklist = CreateLinkList(4);
@@ -94,6 +110,7 @@ int LocateLinkList(LinkList linklist, ElementType data)
 		// DelLinkList(linklist,3);
 		// TranverseLinkList(linklist);
 		int pos = LocateLinkList(linklist, 3);
-		printf("%d", pos);
+		printf("%d\n", pos);
+		printf("%d\n",GetEleLinkList(linklist, 5));
 		return 0;
 	}
