@@ -4,69 +4,93 @@
 
 LinkList InitLinkList()
 {
-	LinkList linklist = (LinkList)malloc(sizeof(Node));
-	linklist->data = 0;
-	linklist->next = NULL;
+	LinkList linklist;
+	linklist.size = 0;
+        linklist.head = (Node*)malloc(sizeof(Node));
+	linklist.head->next = NULL;
 	
 	return linklist;
 }
 
-Status InsertLinkList(LinkList linklist,ElementType data, int pos)
+Status DestroyLinkList(LinkList *linklist)
 {
-	LinkList p = linklist;
-	int j = 0;
-	while(p && j<pos-1)
+	Node *p = (*linklist).head;
+	Node *q;
+	while(p!=NULL)
 	{
-		p = p->next;
-		j++;
+		q = p->next;
+		free(p);
+		p = q;
 	}
-	if(!p || j>pos-1)
+	free(linklist);
+	return SUCCESS;
+}
+
+Status CleanLinkList(LinkList *linklist)
+{
+	Node *p = (*linklist).head->next;
+	Node *q;
+	while(p!=NULL)
 	{
-		return ERROR;	
+		q = p->next;
+		free(p);
+		p = q;		
 	}
-	Node *q = (Node*)malloc(sizeof(Node));
-	q->data = data;
-	q->next = p->next;
-	p->next = q;
-	return SUCCESS; 
+	(*linklist).head->next = NULL;
+	(*linklist).size = 0;
+	return SUCCESS;	
 }
 
 LinkList CreateLinkList(int n)
 {
-	LinkList linklist = (LinkList)malloc(sizeof(Node));
-	linklist->next = NULL;
+	LinkList linklist;
+	linklist.size = n;
+        linklist.head = (Node*)malloc(sizeof(Node));
+	linklist.head->next = NULL;
+	
+	Node *p = linklist.head;
 	for(int i = 0; i < n; i++)
 	{
 		Node *node = (Node*)malloc(sizeof(Node));
 		scanf("%d",&node->data);
-		node->next = linklist->next;
-		linklist->next = node;
+		node->next = p->next;
+		p->next = node;
 	}
 	return linklist;
 }
 
-Status DelLinkList(LinkList linklist, int pos)
+Status InsertLinkList(LinkList *linklist,ElementType data,int pos)
 {
-	Node *p = linklist;
-	int j = 0;
-	while(p && j<pos-1)
-	{
-		p = p->next;
-		j++;
-	}
-	if(!p || j>pos-1)
+	Node *p = LocatePos(linklist,pos-1);
+	if(!p)
 	{
 		return ERROR;
-	}
+       	}
+	Node *q = (Node*)malloc(sizeof(Node));
+	q->data = data;
+	q->next = p->next;
+	p->next = q;
+	(*linklist).size++;
+	return SUCCESS; 
+}
+
+Status DelLinkList(LinkList *linklist, int pos)
+{
+	Node *p = LocatePos(linklist,pos-1);
+	if(!p)
+	{
+		return ERROR;
+       	}
 	Node *q = p->next;
 	p->next = q->next;
 	free(q);
+	(*linklist).size--;
 	return SUCCESS;
 }
 
 void TranverseLinkList(LinkList linklist)
 {
-	Node *p = linklist->next;
+	Node *p = linklist.head->next;
 	while(p)
 	{
 		printf("%d ",p->data);
@@ -76,7 +100,7 @@ void TranverseLinkList(LinkList linklist)
 
 int LocateLinkList(LinkList linklist, ElementType data)
 {
-	Node *p = linklist->next;
+	Node *p = linklist.head->next;
 	int j = 1;
 	while(p && p->data != data)
 	{
@@ -84,15 +108,36 @@ int LocateLinkList(LinkList linklist, ElementType data)
 		j++;
 	}
 	if(!p)
-		return -1;
+		return 0;
 	return j;
 }
 
 ElementType GetEleLinkList(LinkList linklist, int pos)
 {
-	Node *p = linklist->next;
-	int j = 1;
-	while(p && j<pos)
+	Node *p = LocatePos(&linklist,pos);
+	if(!p)
+	{
+		return NULL;
+	}
+	return p->data;
+}
+
+Status SetEleLinkList(LinkList *linklist,ElementType data, int pos)
+{
+	Node *p = LocatePos(linklist,pos);
+	if(!p)
+	{
+		return ERROR;
+	}
+	p->data = data;
+	return SUCCESS;
+}
+
+Node* LocatePos(LinkList *linklist,int pos)
+{
+	Node *p = (*linklist).head;
+	int j = 0;
+	while(p!=NULL && j<pos)
 	{
 		p = p->next;
 		j++;
@@ -101,16 +146,29 @@ ElementType GetEleLinkList(LinkList linklist, int pos)
 	{
 		return NULL;
 	}
-	return p->data;
+	return p;
 }
 	int main() 
 	{
 		LinkList linklist = CreateLinkList(4);
 		TranverseLinkList(linklist);
-		// DelLinkList(linklist,3);
-		// TranverseLinkList(linklist);
-		int pos = LocateLinkList(linklist, 3);
-		printf("%d\n", pos);
-		printf("%d\n",GetEleLinkList(linklist, 5));
+		printf("\nsize=%d\n",linklist.size);
+		InsertLinkList(&linklist,33,3);
+		printf("第二个元素为：%d\n",GetEleLinkList(linklist,2));
+		TranverseLinkList(linklist);
+		printf("\nsize=%d\n",linklist.size);
+		DelLinkList(&linklist,2);
+		TranverseLinkList(linklist);
+		printf("\nsize=%d\n",linklist.size);
+		SetEleLinkList(&linklist,99,1);
+		SetEleLinkList(&linklist,99,4);
+		TranverseLinkList(linklist);
+		printf("\nsize=%d\n",linklist.size);
+		CleanLinkList(&linklist);
+		TranverseLinkList(linklist);
+		printf("\nsize=%d\n",linklist.size);
+		Node *p = LocatePos(&linklist,0);
+		printf("%d",p);	
+	
 		return 0;
 	}

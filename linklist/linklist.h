@@ -3,22 +3,37 @@
 
 typedef int Status;
 
-
 typedef int ElementType;
 
 typedef struct Node{
 	ElementType data;
 	struct Node *next;
-}Node, *LinkList;
+}Node;
 
+typedef struct{
+	int size;
+	Node *head;
+}LinkList;
+
+// 初始化带头节点的单链表
 LinkList InitLinkList();
-
-Status InsertLinkList(LinkList linklist, ElementType data, int pos);
-
-Status DelLinkList(LinkList linklist, int pos);
-
+// 销毁链表
+Status DestroyLinkList(LinkList *linklist);
+// 清空链表
+Status CleanLinkList(LinkList *linklist);
+// 创建一个长度为n的链表，命令行输入元素
+LinkList CreateLinkList(int n);
+// 在链表的第pos个位置上插入data元素
+Status InsertLinkList(LinkList *linklist, ElementType data, int pos);
+// 删除链表的第pos个位置上的元素
+Status DelLinkList(LinkList *linklist, int pos);
+// 遍历链表
 void TranverseLinkList(LinkList linklist);
-
+// 返回数据元素data在链表中的位置
 int LocateLinkList(LinkList linklist, ElementType data);
-
+// 返回链表的第pos个位置上的元素
 ElementType GetEleLinkList(LinkList linklist, int pos);
+// 设置链表的第pos个位置上的元素为data
+Status SetEleLinkList(LinkList *linklist,ElementType data, int pos);
+// 获取指向第pos个元素的指针
+Node* LocatePos(LinkList *linklist,int pos);
