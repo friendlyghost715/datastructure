@@ -13,6 +13,7 @@ typedef struct Node{
 typedef struct{
 	int size;
 	Node *head;
+	Node *tail;
 }LinkList;
 
 // 初始化带头节点的单链表

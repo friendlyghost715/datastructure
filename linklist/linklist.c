@@ -7,6 +7,7 @@ LinkList InitLinkList()
 	LinkList linklist;
 	linklist.size = 0;
         linklist.head = (Node*)malloc(sizeof(Node));
+	linklist.tail = linklist.head;
 	linklist.head->next = NULL;
 	
 	return linklist;
@@ -38,6 +39,7 @@ Status CleanLinkList(LinkList *linklist)
 	}
 	(*linklist).head->next = NULL;
 	(*linklist).size = 0;
+	(*linklist).tail = (*linklist).head;
 	return SUCCESS;	
 }
 
@@ -49,13 +51,16 @@ LinkList CreateLinkList(int n)
 	linklist.head->next = NULL;
 	
 	Node *p = linklist.head;
+	Node *node;
 	for(int i = 0; i < n; i++)
 	{
-		Node *node = (Node*)malloc(sizeof(Node));
+		node = (Node*)malloc(sizeof(Node));
 		scanf("%d",&node->data);
 		node->next = p->next;
 		p->next = node;
+		p = node;
 	}
+	linklist.tail = node;
 	return linklist;
 }
 
@@ -71,6 +76,10 @@ Status InsertLinkList(LinkList *linklist,ElementType data,int pos)
 	q->next = p->next;
 	p->next = q;
 	(*linklist).size++;
+	if(pos == (*linklist).size)
+	{
+		(*linklist).tail = q;
+	}
 	return SUCCESS; 
 }
 
@@ -84,6 +93,10 @@ Status DelLinkList(LinkList *linklist, int pos)
 	Node *q = p->next;
 	p->next = q->next;
 	free(q);
+	if((*linklist).size == pos)
+	{
+		(*linklist).tail = p;
+	}
 	(*linklist).size--;
 	return SUCCESS;
 }
@@ -137,7 +150,7 @@ Node* LocatePos(LinkList *linklist,int pos)
 {
 	Node *p = (*linklist).head;
 	int j = 0;
-	while(p!=NULL && j<pos)
+	while(p && j<pos)
 	{
 		p = p->next;
 		j++;
@@ -150,19 +163,28 @@ Node* LocatePos(LinkList *linklist,int pos)
 }
 	int main() 
 	{
+		printf("创建一个链表\n");
 		LinkList linklist = CreateLinkList(4);
 		TranverseLinkList(linklist);
 		printf("\nsize=%d\n",linklist.size);
+		printf("最后一个元素为:%d\n",linklist.tail->data);
+		printf("在第三个位置插入一个元素33\n");
 		InsertLinkList(&linklist,33,3);
 		printf("第二个元素为：%d\n",GetEleLinkList(linklist,2));
 		TranverseLinkList(linklist);
 		printf("\nsize=%d\n",linklist.size);
+		printf("删除一个元素\n");
 		DelLinkList(&linklist,2);
 		TranverseLinkList(linklist);
 		printf("\nsize=%d\n",linklist.size);
 		SetEleLinkList(&linklist,99,1);
 		SetEleLinkList(&linklist,99,4);
 		TranverseLinkList(linklist);
+		printf("\nsize=%d\n",linklist.size);
+		printf("在最后一个位置上插入一个元素66\n");
+		InsertLinkList(&linklist,66,linklist.size+1);
+		TranverseLinkList(linklist);
+		printf("最后一个元素为:%d",linklist.tail->data);
 		printf("\nsize=%d\n",linklist.size);
 		CleanLinkList(&linklist);
 		TranverseLinkList(linklist);
