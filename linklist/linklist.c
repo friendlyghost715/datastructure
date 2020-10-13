@@ -2,6 +2,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+Node* MakeNode(ElementType e)
+{
+	Node *node = (Node*)malloc(sizeof(Node));
+	node->data = e;
+	node->next = NULL;
+	return node;
+}
+
 LinkList InitLinkList()
 {
 	LinkList linklist;
@@ -52,10 +60,11 @@ LinkList CreateLinkList(int n)
 	
 	Node *p = linklist.head;
 	Node *node;
+	ElementType data;
 	for(int i = 0; i < n; i++)
 	{
-		node = (Node*)malloc(sizeof(Node));
-		scanf("%d",&node->data);
+		scanf("%d",&data);
+		node = MakeNode(data);
 		node->next = p->next;
 		p->next = node;
 		p = node;
@@ -71,8 +80,7 @@ Status InsertLinkList(LinkList *linklist,ElementType data,int pos)
 	{
 		return ERROR;
        	}
-	Node *q = (Node*)malloc(sizeof(Node));
-	q->data = data;
+	Node *q = MakeNode(data);
 	q->next = p->next;
 	p->next = q;
 	(*linklist).size++;
@@ -148,7 +156,7 @@ Status SetEleLinkList(LinkList *linklist,ElementType data, int pos)
 
 Node* LocatePos(LinkList *linklist,int pos)
 {
-	Node *p = (*linklist).head;
+	Node *p = (*linklist).head; 
 	int j = 0;
 	while(p && j<pos)
 	{
@@ -160,6 +168,14 @@ Node* LocatePos(LinkList *linklist,int pos)
 		return NULL;
 	}
 	return p;
+}
+void Append(LinkList *a,LinkList *b)
+{
+	(*a).tail->next = (*b).head->next;
+	(*a).tail = (*b).tail;
+	(*a).size += (*b).size;
+	free((*b).head);
+	//free(b);
 }
 	int main() 
 	{
@@ -186,11 +202,15 @@ Node* LocatePos(LinkList *linklist,int pos)
 		TranverseLinkList(linklist);
 		printf("最后一个元素为:%d",linklist.tail->data);
 		printf("\nsize=%d\n",linklist.size);
+		printf("创建另一个链表\n");
+		LinkList b = CreateLinkList(3);
+		printf("&b=%d\n",&b);
+		Append(&linklist,&b);
+		TranverseLinkList(linklist);
+		printf("\nsize=%d\n",linklist.size);
+	
 		CleanLinkList(&linklist);
 		TranverseLinkList(linklist);
 		printf("\nsize=%d\n",linklist.size);
-		Node *p = LocatePos(&linklist,0);
-		printf("%d",p);	
-	
 		return 0;
 	}

@@ -16,6 +16,8 @@ typedef struct{
 	Node *tail;
 }LinkList;
 
+// 分配结点，并返回指针 
+Node* MakeNode(ElementType e);
 // 初始化带头节点的单链表
 LinkList InitLinkList();
 // 销毁链表
@@ -38,3 +40,5 @@ ElementType GetEleLinkList(LinkList linklist, int pos);
 Status SetEleLinkList(LinkList *linklist,ElementType data, int pos);
 // 获取指向第pos个元素的指针
 Node* LocatePos(LinkList *linklist,int pos);
+// 将b链表追加到a链表的尾部
+void Append(LinkList *a, LinkList *b);
